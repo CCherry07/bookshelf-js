@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import {jsx} from '@emotion/core'
+import { jsx } from '@emotion/core'
 
 import * as React from 'react'
 import {
@@ -11,13 +11,15 @@ import {
 } from 'react-icons/fa'
 import Tooltip from '@reach/tooltip'
 // 🐨 you'll need useQuery, useMutation, and queryCache from 'react-query'
+import { useQuery, useMutation } from 'react-query';
 // 🐨 you'll also need client from 'utils/api-client'
-import {useAsync} from 'utils/hooks'
+import { client } from 'utils/api-client';
+import { useAsync } from 'utils/hooks'
 import * as colors from 'styles/colors'
-import {CircleButton, Spinner} from './lib'
+import { CircleButton, Spinner } from './lib'
 
-function TooltipButton({label, highlight, onClick, icon, ...rest}) {
-  const {isLoading, isError, error, run} = useAsync()
+function TooltipButton({ label, highlight, onClick, icon, ...rest }) {
+  const { isLoading, isError, error, run } = useAsync()
 
   function handleClick() {
     run(onClick())
@@ -32,8 +34,8 @@ function TooltipButton({label, highlight, onClick, icon, ...rest}) {
             color: isLoading
               ? colors.gray80
               : isError
-              ? colors.danger
-              : highlight,
+                ? colors.danger
+                : highlight,
           },
         }}
         disabled={isLoading}
@@ -47,15 +49,21 @@ function TooltipButton({label, highlight, onClick, icon, ...rest}) {
   )
 }
 
-function StatusButtons({user, book}) {
+function StatusButtons({ user, book }) {
   // 🐨 call useQuery here to get the listItem (if it exists)
   // queryKey should be 'list-items'
   // queryFn should call the list-items endpoint
-
+  const { data: listItems } = useQuery({
+    queryKey: 'list-items',
+    queryFn: () => client("list-items", { token: user.token }).then(data => data.listItems)
+  })
   // 🐨 search through the listItems you got from react-query and find the
   // one with the right bookId.
-  const listItem = null
-
+  const listItem = listItems?.find(li => li.bookId === book.id) || null
+  const [create] = useMutation(({ bookId }) => {
+    console.log(bookId);
+    client("list-items", { data: { bookId }, token: user.token })
+  })
   // 💰 for all the mutations below, if you want to get the list-items cache
   // updated after this query finishes then use the `onSettled` config option
   // to queryCache.invalidateQueries('list-items')
@@ -106,7 +114,7 @@ function StatusButtons({user, book}) {
         <TooltipButton
           label="Add to list"
           highlight={colors.indigo}
-          // 🐨 add an onClick here that calls create
+          onClick={() => create({ bookId: book.id })}
           icon={<FaPlusCircle />}
         />
       )}
@@ -114,4 +122,4 @@ function StatusButtons({user, book}) {
   )
 }
 
-export {StatusButtons}
+export { StatusButtons }
