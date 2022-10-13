@@ -11,7 +11,7 @@ import {
 } from 'react-icons/fa'
 import Tooltip from '@reach/tooltip'
 // 🐨 you'll need useQuery, useMutation, and queryCache from 'react-query'
-import { useQuery, useMutation } from 'react-query';
+import { useQuery, useMutation, queryCache } from 'react-query';
 // 🐨 you'll also need client from 'utils/api-client'
 import { client } from 'utils/api-client';
 import { useAsync } from 'utils/hooks'
@@ -57,13 +57,18 @@ function StatusButtons({ user, book }) {
     queryKey: 'list-items',
     queryFn: () => client("list-items", { token: user.token }).then(data => data.listItems)
   })
+  console.log(listItems);
   // 🐨 search through the listItems you got from react-query and find the
   // one with the right bookId.
   const listItem = listItems?.find(li => li.bookId === book.id) || null
-  const [create] = useMutation(({ bookId }) => {
-    console.log(bookId);
-    client("list-items", { data: { bookId }, token: user.token })
-  })
+  const [create] = useMutation(({ bookId }) => client("list-items", { data: { bookId }, token: user.token }),
+    {
+      onSettled: () => queryCache.invalidateQueries("list-items")
+    })
+  const [remove] = useMutation(({ id }) => client(`list-items/${id}`, { method: "DELETE", token: user.token }),
+    {
+      onSettled: () => queryCache.invalidateQueries("list-items")
+    })
   // 💰 for all the mutations below, if you want to get the list-items cache
   // updated after this query finishes then use the `onSettled` config option
   // to queryCache.invalidateQueries('list-items')
@@ -108,6 +113,7 @@ function StatusButtons({ user, book }) {
           label="Remove from list"
           highlight={colors.danger}
           // 🐨 add an onClick here that calls remove
+          onClick={() => remove({ id: listItem.id })}
           icon={<FaMinusCircle />}
         />
       ) : (
