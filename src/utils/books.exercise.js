@@ -15,7 +15,7 @@ const loadingBooks = Array.from({ length: 10 }, (v, index) => ({
   id: `loading-book-${index}`,
   ...loadingBook,
 }))
-export const useQueryBookSearch = (query, user) => {
+export const useBookSearch = (query, user) => {
   const result = useQuery({
     queryKey: ["book", { query }],
     queryFn: () => client(`books?query=${encodeURIComponent(query)}`, {
@@ -23,4 +23,12 @@ export const useQueryBookSearch = (query, user) => {
     }).then(data => data.books),
   })
   return { ...result, books: result.data ?? loadingBooks }
+}
+
+export const useBook = (bookId, user) => {
+  const result = useQuery({
+    queryKey: ['book', { bookId }],
+    queryFn: client(`books/${bookId}`, { token: user.token }).then(data => data.book)
+  })
+  return { ...result, book: result.data ?? loadingBook }
 }

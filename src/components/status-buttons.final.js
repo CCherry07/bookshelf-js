@@ -1,5 +1,5 @@
 /** @jsx jsx */
-import {jsx} from '@emotion/core'
+import { jsx } from '@emotion/core'
 
 import * as React from 'react'
 import {
@@ -10,14 +10,14 @@ import {
   FaTimesCircle,
 } from 'react-icons/fa'
 import Tooltip from '@reach/tooltip'
-import {useQuery, useMutation, queryCache} from 'react-query'
-import {client} from 'utils/api-client'
-import {useAsync} from 'utils/hooks'
+import { useQuery, useMutation, queryCache } from 'react-query'
+import { client } from 'utils/api-client'
+import { useAsync } from 'utils/hooks'
 import * as colors from 'styles/colors'
-import {CircleButton, Spinner} from './lib'
+import { CircleButton, Spinner } from './lib'
 
-function TooltipButton({label, highlight, onClick, icon, ...rest}) {
-  const {isLoading, isError, error, run} = useAsync()
+function TooltipButton({ label, highlight, onClick, icon, ...rest }) {
+  const { isLoading, isError, error, run } = useAsync()
 
   function handleClick() {
     run(onClick())
@@ -32,8 +32,8 @@ function TooltipButton({label, highlight, onClick, icon, ...rest}) {
             color: isLoading
               ? colors.gray80
               : isError
-              ? colors.danger
-              : highlight,
+                ? colors.danger
+                : highlight,
           },
         }}
         disabled={isLoading}
@@ -47,11 +47,11 @@ function TooltipButton({label, highlight, onClick, icon, ...rest}) {
   )
 }
 
-function StatusButtons({user, book}) {
-  const {data: listItems} = useQuery({
+function StatusButtons({ user, book }) {
+  const { data: listItems } = useQuery({
     queryKey: 'list-items',
     queryFn: () =>
-      client(`list-items`, {token: user.token}).then(data => data.listItems),
+      client(`list-items`, { token: user.token }).then(data => data.listItems),
   })
   const listItem = listItems?.find(li => li.bookId === book.id) ?? null
 
@@ -62,17 +62,17 @@ function StatusButtons({user, book}) {
         data: updates,
         token: user.token,
       }),
-    {onSettled: () => queryCache.invalidateQueries('list-items')},
+    { onSettled: () => queryCache.invalidateQueries('list-items') },
   )
 
   const [remove] = useMutation(
-    ({id}) => client(`list-items/${id}`, {method: 'DELETE', token: user.token}),
-    {onSettled: () => queryCache.invalidateQueries('list-items')},
+    ({ id }) => client(`list-items/${id}`, { method: 'DELETE', token: user.token }),
+    { onSettled: () => queryCache.invalidateQueries('list-items') },
   )
 
   const [create] = useMutation(
-    ({bookId}) => client(`list-items`, {data: {bookId}, token: user.token}),
-    {onSettled: () => queryCache.invalidateQueries('list-items')},
+    ({ bookId }) => client(`list-items`, { data: { bookId }, token: user.token }),
+    { onSettled: () => queryCache.invalidateQueries('list-items') },
   )
 
   return (
@@ -82,14 +82,14 @@ function StatusButtons({user, book}) {
           <TooltipButton
             label="Unmark as read"
             highlight={colors.yellow}
-            onClick={() => update({id: listItem.id, finishDate: null})}
+            onClick={() => update({ id: listItem.id, finishDate: null })}
             icon={<FaBook />}
           />
         ) : (
           <TooltipButton
             label="Mark as read"
             highlight={colors.green}
-            onClick={() => update({id: listItem.id, finishDate: Date.now()})}
+            onClick={() => update({ id: listItem.id, finishDate: Date.now() })}
             icon={<FaCheckCircle />}
           />
         )
@@ -98,14 +98,14 @@ function StatusButtons({user, book}) {
         <TooltipButton
           label="Remove from list"
           highlight={colors.danger}
-          onClick={() => remove({id: listItem.id})}
+          onClick={() => remove({ id: listItem.id })}
           icon={<FaMinusCircle />}
         />
       ) : (
         <TooltipButton
           label="Add to list"
           highlight={colors.indigo}
-          onClick={() => create({bookId: book.id})}
+          onClick={() => create({ bookId: book.id })}
           icon={<FaPlusCircle />}
         />
       )}
@@ -113,4 +113,4 @@ function StatusButtons({user, book}) {
   )
 }
 
-export {StatusButtons}
+export { StatusButtons }
