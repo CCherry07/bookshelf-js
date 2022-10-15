@@ -28,7 +28,7 @@ export const useBookSearch = (query, user) => {
 export const useBook = (bookId, user) => {
   const result = useQuery({
     queryKey: ['book', { bookId }],
-    queryFn: client(`books/${bookId}`, { token: user.token }).then(data => data.book)
+    queryFn: () => client(`books/${bookId}`, { token: user.token }).then(data => data.book)
   })
   return { ...result, book: result.data ?? loadingBook }
 }
