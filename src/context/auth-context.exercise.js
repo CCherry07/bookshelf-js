@@ -1,7 +1,7 @@
 // 🐨 create and export a React context variable for the AuthContext
 // 💰 using React.createContext
 
-import React, { useCallback, useMemo, useEffect, useContext } from 'react';
+import React, { useContext } from 'react';
 import * as auth from 'auth-provider';
 import { useAsync } from 'utils/hooks';
 import { queryCache } from 'react-query';

@@ -18,7 +18,7 @@ function DiscoverBooksScreen() {
   const refetchBookSearchQuery = useRefetchBookSearchQuery()
   React.useEffect(() => {
     return () => refetchBookSearchQuery()
-  }, [user])
+  }, [user, refetchBookSearchQuery])
 
   const isLoading = status === 'loading'
   const isSuccess = status === 'success'
