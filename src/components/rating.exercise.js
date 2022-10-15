@@ -98,7 +98,7 @@ function Rating({ listItem, user }) {
       }}
     >
       <span css={{ display: 'flex' }}>{stars}</span>
-      {isError && <ErrorMessage variant={"inline"} css={{ fontSize: "0.7em", marginLeft: "2em" }} error={error} />}
+      {isError && <ErrorMessage variant={"inline"} css={{ fontSize: "0.7em", marginLeft: "1em" }} error={error} />}
     </div>
   )
 }
