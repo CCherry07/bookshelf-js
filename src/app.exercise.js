@@ -46,7 +46,6 @@ function App() {
   const logout = () => {
     auth.logout()
     queryCache.clear()
-    // 🐨 clear the query cache with queryCache.clear()
     setData(null)
   }
 
