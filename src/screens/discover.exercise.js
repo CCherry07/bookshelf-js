@@ -8,17 +8,16 @@ import { useBookSearch, useRefetchBookSearchQuery } from 'utils/books'
 import * as colors from 'styles/colors'
 import { BookRow } from 'components/book-row'
 import { BookListUL, Spinner, Input } from 'components/lib'
-import { useAuth } from 'context/auth-context'
 
 function DiscoverBooksScreen() {
-  const { user } = useAuth()
   const [query, setQuery] = React.useState('')
   const [queried, setQueried] = React.useState(false)
   const { books, error, status } = useBookSearch(query)
   const refetchBookSearchQuery = useRefetchBookSearchQuery()
+
   React.useEffect(() => {
     return () => refetchBookSearchQuery()
-  }, [user, refetchBookSearchQuery])
+  }, [refetchBookSearchQuery])
 
   const isLoading = status === 'loading'
   const isSuccess = status === 'success'
@@ -92,8 +91,6 @@ function DiscoverBooksScreen() {
             {books.map(book => (
               <li key={book.id} aria-label={book.title}>
                 <BookRow
-                  // 💣 remove the user prop here
-                  user={user}
                   key={book.id}
                   book={book}
                 />

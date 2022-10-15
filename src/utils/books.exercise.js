@@ -49,8 +49,7 @@ function useBook(bookId) {
   })
   return data ?? loadingBook
 }
-
-async function useRefetchBookSearchQuery() {
+function useRefetchBookSearchQuery() {
   const { user } = useAuth()
   return useCallback(async () => {
     queryCache.removeQueries('bookSearch')
