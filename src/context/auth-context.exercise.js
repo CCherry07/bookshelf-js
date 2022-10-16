@@ -1,7 +1,7 @@
 // 🐨 create and export a React context variable for the AuthContext
 // 💰 using React.createContext
 
-import React, { useContext } from 'react';
+import React, { useCallback, useContext } from 'react';
 import * as auth from 'auth-provider';
 import { useAsync } from 'utils/hooks';
 import { queryCache } from 'react-query';
@@ -67,5 +67,10 @@ function useAuth() {
   return context
 }
 
-export { AuthProvider, useAuth }
+function useClient() {
+  const { user: { token } } = useAuth()
+  return useCallback((endpoint, config) => client(endpoint, { token, ...config }), [token])
+}
+
+export { AuthProvider, useAuth, useClient }
 
