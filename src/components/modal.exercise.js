@@ -5,21 +5,8 @@ import { Dialog } from './lib'
 
 import React from "react"
 
-// 💰 Here's a reminder of how your components will be used:
-/*
-<Modal>
-  <ModalOpenButton>
-    <button>Open Modal</button>
-  </ModalOpenButton>
-  <ModalContents aria-label="Modal label (for screen readers)">
-    <ModalDismissButton>
-      <button>Close Modal</button>
-    </ModalDismissButton>
-    <h3>Modal title</h3>
-    <div>Some great contents of the modal</div>
-  </ModalContents>
-</Modal>
-*/
+const callAll = (...fns) => (...args) => fns.forEach(fn => fn & fn(...args))
+
 const ModalContext = React.createContext()
 export function Modal(props) {
   const [isOpen, setIsOpen] = React.useState(false)
@@ -30,19 +17,13 @@ const useModalConext = () => React.useContext(ModalContext)
 export function ModalOpenButton({ children: child }) {
   const { setIsOpen } = useModalConext()
   return React.cloneElement(child, {
-    onClick: (...args) => {
-      setIsOpen(true)
-      child.props.onClick && child.props.onClick(...args)
-    }
+    onClick: callAll(() => setIsOpen(true), child.props.onClick)
   })
 }
 export function ModalDismissButton({ children: child }) {
   const { setIsOpen } = useModalConext()
   return React.cloneElement(child, {
-    onClick: (...args) => {
-      setIsOpen(false)
-      child.props.onClick && child.props.onClick(...args)
-    }
+    onClick: callAll(() => setIsOpen(false), child.props.onClick)
   })
 }
 
