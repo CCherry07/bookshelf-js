@@ -1,25 +1,24 @@
 /** @jsx jsx */
-import {jsx} from '@emotion/core'
+import { jsx } from '@emotion/core'
 
 import * as React from 'react'
 import * as auth from 'auth-provider'
-import {client} from 'utils/api-client'
-import {useAsync} from 'utils/hooks'
-import {FullPageSpinner, FullPageErrorFallback} from 'components/lib'
+import { client } from 'utils/api-client'
+import { useAsync } from 'utils/hooks'
+import { FullPageSpinner, FullPageErrorFallback } from 'components/lib'
 
 async function getUser() {
   let user = null
 
   const token = await auth.getToken()
   if (token) {
-    const data = await client('me', {token})
+    const data = await client('me', { token })
     user = data.user
   }
 
   return user
 }
 
-const userPromise = getUser()
 
 const AuthContext = React.createContext()
 AuthContext.displayName = 'AuthContext'
@@ -38,6 +37,7 @@ function AuthProvider(props) {
   } = useAsync()
 
   React.useEffect(() => {
+    const userPromise = getUser()
     run(userPromise)
   }, [run])
 
@@ -54,7 +54,7 @@ function AuthProvider(props) {
     setData(null)
   }, [setData])
 
-  const value = React.useMemo(() => ({user, login, logout, register}), [
+  const value = React.useMemo(() => ({ user, login, logout, register }), [
     login,
     logout,
     register,
@@ -86,12 +86,12 @@ function useAuth() {
 
 function useClient() {
   const {
-    user: {token},
+    user: { token },
   } = useAuth()
   return React.useCallback(
-    (endpoint, config) => client(endpoint, {...config, token}),
+    (endpoint, config) => client(endpoint, { ...config, token }),
     [token],
   )
 }
 
-export {AuthProvider, useAuth, useClient}
+export { AuthProvider, useAuth, useClient }
